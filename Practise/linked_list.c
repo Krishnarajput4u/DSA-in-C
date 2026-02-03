@@ -5,7 +5,6 @@ struct listNode{
 };
 typedef struct listNode ListNode;
 typedef ListNode *ListNodePtr;
-
 void insert(ListNodePtr *sPtr, int value);
 void delete(ListNodePtr *sPtr, int value);
 void printList(ListNodePtr currentPtr);
