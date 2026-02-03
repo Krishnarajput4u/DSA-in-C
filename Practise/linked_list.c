@@ -1,4 +1,6 @@
 #include<stdio.h>
+#include<stdlib.h>
+
 struct listNode{
     int data;
     struct listNode *nextPtr; 
