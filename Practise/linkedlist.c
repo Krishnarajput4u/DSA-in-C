@@ -1,116 +1,64 @@
 #include<stdio.h>
+#include<stdlib.h>
 
-struct listnode{
+struct listNode{
     int data;
-    struct listnode* next;
+    struct listNode *nextPtr;
 };
 
-typedef struct listnode ListNode;
-typedef ListNode *ListNodeptr;
+typedef struct listNode ListNode;
+typedef ListNode *ListNodePtr;
 
-void insert(ListNodeptr *sPtr,int value);
-void instructions(void);
-void delete(ListNodeptr *sPtr,int value);
-int isEmpty(ListNodeptr *sPtr);
-void display(ListNodeptr currentptr);
+void delete(ListNodePtr *sPtr,int value);
+void insert(ListNodePtr *sPtr,int value);
+void printList(ListNodePtr *currentPtr);
+int isEmpty();
+void instructions(){
+    printf("1. Insert\n2. Delete\n3.Print\n4.Exit\n");
+}
+
+
 
 int main(){
     int choice,value;
-    ListNodeptr startptr=NULL;
+    ListNodePtr startPtr=NULL;
     do{
-        printf("\nEnter your choice:\n");
-        printf("1 Insert\n");
-        printf("2 Delete\n");
-        printf("3 Print\n");
-        printf("4 Exit\n");
-        printf("? ");
-        scanf("%d",&choice);
+        instructions();
+        printf("Enter the choice : ");
+        scanf("%d,&choice");
         switch(choice){
             case 1:
-                printf("Enter an integer: ");
+                printf("Enter the Value : ");
                 scanf("%d",&value);
-                insert(&startptr,value);
+                insert(&startPtr,value);
                 break;
             case 2:
-                printf("Enter an integer: ");
+                printf("Enter the Value :");
                 scanf("%d",&value);
-                delete(&startptr,value);
+                delete(&startPtr,&value);
                 break;
             case 3:
-                display(startptr);
+                printList(&startPtr);
                 break;
             case 4:
-                printf("End of run.\n");
-                return 0;
+                printf("Thank you \n");
+                break;
             default:
-                printf("Invalid choice.\n");
+                printf("Invalid Choice -_- !!\n");
         }
-    }while(choice != 4);
+    }while(choice!=4);
     return 0;
 }
 
-void insert(ListNodeptr *sPtr,int value){
-    ListNodeptr newptr;
-    newptr=malloc(sizeof(ListNode));
-    if(newptr!=NULL){
-        newptr->data=value;
-        newptr->next=*sPtr;
-        *sPtr=newptr;
-    }
-    else{
-        printf("%d not inserted. No memory available.\n",value);
-    }
-}
 
-void delete(ListNodeptr *sPtr,int value){
-    ListNodeptr previousptr;
-    ListNodeptr currentptr;
-    ListNodeptr tempPtr;
-
-    if(isEmpty(sPtr)){
-        printf("List is empty.\n");
-    }
-    else{
-        if((*sPtr)->data==value){
-            tempPtr=*sPtr;
-            *sPtr=(*sPtr)->next;
-            free(tempPtr);
-        }
-        else{
-            previousptr=*sPtr;
-            currentptr=(*sPtr)->next;
-
-            while(currentptr!=NULL && currentptr->data!=value){
-                previousptr=currentptr;
-                currentptr=currentptr->next;
-            }
-            if(currentptr!=NULL){
-                tempPtr=currentptr;
-                previousptr->next=currentptr->next;
-                free(tempPtr);
-            }
-            else{
-                printf("%d not found.\n",value);
-            }
-        }
+void insert(ListNodePtr *sPtr,int value){
+    ListNodePtr newPtr;
+    newPtr=malloc(sizeof(ListNode));
+    if(newPtr==NULL){
+        printf("Unable to allocate memory ");
+    } else{
+        newPtr->data=value;
+        newPtr->nextPtr=*sPtr;
+        *sPtr=newPtr;
     }
 }
-
-int isEmpty(ListNodeptr *sPtr){
-    return *sPtr==NULL;
-}
-
-void display(ListNodeptr currentptr){
-    if(isEmpty(&currentptr)){
-        printf("List is empty.\n");
-    }
-    else{
-        printf("The list is:\n");
-        while(currentptr!=NULL){
-            printf("%d --> ",currentptr->data);
-            currentptr=currentptr->next;
-        }
-        printf("NULL\n");
-    }
-}
-
