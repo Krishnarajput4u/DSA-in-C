@@ -1,56 +1,34 @@
-// Problem: Write a program to find the maximum and minimum values present in a given array of integers.
-
-// Input:
-// - First line: integer n
-// - Second line: n integers
-
-// Output:
-// - Print the maximum and minimum elements
-
-// Example:
-// Input:
-// 6
-// 3 5 1 9 2 8
-
-// Output:
-// Max: 9
-// Min: 1
 #include<stdio.h>
 #include<stdlib.h>
 
+void reverse(int *arr,int start,int end){
+    while(start<end){
+        int temp=arr[start];
+        arr[start]=arr[end];
+        arr[end]=temp;
+        start++;
+        end--;
+    }
+}
+
+void kshift(int *arr,int k,int num){
+    reverse(arr,0,num);
+    reverse(arr,0,k);
+    reverse(arr,k,num);
+}
 int main(){
-    int n;
-    scanf("%d",&n);
-
-    if(n <= 0){
-        printf("Invalid Input");
-        return 1;
+    int num;
+    printf("Enter the number : ");
+    scanf("%d",&num);
+    int *arr=malloc(num*sizeof(int));
+    for(int i=0;i<num;i++){
+        scanf("%d",&arr[i]);
     }
-
-    int *arr = (int*)malloc(n * sizeof(int));
-    if(arr == NULL){
-        printf("Memory allocation failed");
-        return 1;
+    int shift;
+    printf("Enter the number by which you want to right shift the array : ");
+    scanf("%d",&shift);
+    kshift(arr,shift,num);
+    for(int i=0;i<num;i++){
+        printf("%d ",arr[i]);
     }
-
-    for(int i = 0; i < n; i++){
-        scanf("%d", &arr[i]);
-    }
-
-    int max = arr[0], min = arr[0];
-
-    for(int i = 1; i < n; i++){
-        if(arr[i] > max){
-            max = arr[i];
-        }
-        if(arr[i] < min){
-            min = arr[i];
-        }
-    }
-
-    printf("Max: %d\n", max);
-    printf("Min: %d", min);
-
-    free(arr);
-    return 0;
 }
