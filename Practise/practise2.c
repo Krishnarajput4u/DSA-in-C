@@ -9,17 +9,17 @@ struct listNode{
 typedef struct listNode ListNode;
 typedef ListNode *ListNodePtr;
 
-void delete(ListNodePtr *sPtr,int value);
 void insert(ListNodePtr *sPtr,int value);
 void printList(ListNodePtr currentPtr);
 int isEmpty(ListNodePtr *sPtr);
-void instructions();
 
 int main(){
-    int choice,value;
-    ListNodePtr startPtr = NULL;
+    ListNodePtr startPtr=NULL;
+    int choice,value;   
     do{
-        instructions();
+        printf("\n1. Insert a value\n");
+        printf("2. Print the list\n");
+        printf("3. Exit\n");
         printf("Enter your choice : ");
         scanf("%d",&choice);
         switch(choice){
@@ -33,28 +33,17 @@ int main(){
                 printList(startPtr);
                 break;
             case 3:
-                printf("Enter the value to delete : ");
-                scanf("%d",&value);
-                delete(&startPtr,value);
-                printList(startPtr);
-                break;
-            case 4:
                 printf("End.\n");
                 break;
             default:
                 printf("Invalid Choice -_- .\n");
-        }
-    }while(choice!=4);
+        }   
+    }while(choice!=3);
     return 0;
+
 }
 
-void instructions(){
-    printf("\n1. Insert a value\n");
-    printf("2. Print the list\n");
-    printf("3. Delete a value\n");
-    printf("4. Exit\n");
-}
-
+//insert function with value checking
 void insert(ListNodePtr *sPtr,int value){
     ListNodePtr newNode=NULL;
     newNode=(ListNodePtr)malloc(sizeof(ListNode));
@@ -63,7 +52,19 @@ void insert(ListNodePtr *sPtr,int value){
     }
     else{
         newNode->data=value;
-        newNode->next=*sPtr;
-        *sPtr=newNode;
+        newNode->next=NULL;
+        ListNodePtr previousPtr=NULL,currentPtr=*sPtr;
+        while(currentPtr!=NULL && value>currentPtr->data){
+            previousPtr=currentPtr;
+            currentPtr=currentPtr->next;
+        }
+        if(previousPtr==NULL){
+            newNode->next=*sPtr;
+            *sPtr=newNode;
+        }
+        else{
+            previousPtr->next=newNode;
+            newNode->next=currentPtr;
+        }
     }
 }
