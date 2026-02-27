@@ -11,7 +11,9 @@ typedef ListNode *ListNodePtr;
 
 void insert(ListNodePtr *sPtr,int value);
 void printList(ListNodePtr currentPtr);
+void delete(ListNodePtr *sPtr,int value);
 int isEmpty(ListNodePtr *sPtr);
+void deletionAtEnd(ListNodePtr *sPtr);
 
 int main(){
     ListNodePtr startPtr=NULL;
@@ -67,4 +69,59 @@ void insert(ListNodePtr *sPtr,int value){
             newNode->next=currentPtr;
         }
     }
+}
+
+void delete(ListNodePtr *sPtr,int value){
+    ListNodePtr currentPtr;
+    ListNodePtr previousPtr;
+    if(*sPtr!=NULL && (*sPtr)->data==value){
+        currentPtr=*sPtr;
+        *sPtr=(*sPtr)->next;
+        free(currentPtr);
+        printf("Value deleted .\n");
+    }
+    else{
+        previousPtr=*sPtr;
+        currentPtr=(*sPtr)->next;
+
+        while(currentPtr!=NULL && currentPtr->data!=value){
+            previousPtr=currentPtr;
+            currentPtr=currentPtr->next;
+        }
+        if(currentPtr!=NULL){
+            previousPtr->next=currentPtr->next;
+            free(currentPtr);
+            printf("Value deleted .\n");
+        }
+        else{
+            printf("Value not found .\n");
+        }
+    }
+}
+
+void deletionAtEnd(ListNodePtr *sPtr) {
+    if (*sPtr == NULL) {
+        return; 
+    }
+
+    ListNodePtr currentPtr = *sPtr;
+    ListNodePtr previousPtr = NULL;
+
+    if (currentPtr->next == NULL) {
+        free(currentPtr);
+        *sPtr = NULL;
+        return;
+    }
+
+    while (currentPtr->next != NULL) {
+        previousPtr = currentPtr;
+        currentPtr = currentPtr->next;
+    }
+
+    free(currentPtr);
+    previousPtr->next = NULL;
+}
+
+int isEmpty(ListNodePtr *sPtr){
+    return *sPtr==NULL;
 }
