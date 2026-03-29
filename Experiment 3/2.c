@@ -296,7 +296,6 @@ void undo() {
     }
     strcpy(redoS[++rTop], undoS[uTop]); // Move last action undo->redo
     printf("Undo \"%s\" removed\n", undoS[uTop]);
-    printf("%")
     uTop--;
 }
 
