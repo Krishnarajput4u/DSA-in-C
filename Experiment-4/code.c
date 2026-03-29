@@ -135,8 +135,17 @@ typedef struct {
     int top;
 } Stack;
 
-Stack s1 = {.top = -1};
-Stack s2 = {.top = -1};
+typedef struct {
+    Stack inStack;   // New items are pushed here.
+    Stack outStack;  // Items are dequeued from here.
+} TwoStackQueue;
+
+TwoStackQueue q;
+
+void init_two_stack_queue() {
+    q.inStack.top = -1;
+    q.outStack.top = -1;
+}
 
 int stack_is_empty(Stack *s) {
     return s->top == -1;
@@ -159,46 +168,49 @@ int stack_pop(Stack *s) {
     return s->data[s->top--];
 }
 
+void move_in_to_out() {
+    while (!stack_is_empty(&q.inStack)) {
+        stack_push(&q.outStack, stack_pop(&q.inStack));
+    }
+}
+
 void two_stack_enqueue(int value) {
-    if (stack_is_full(&s1)) {
+    if (stack_is_full(&q.inStack)) {
         printf("Queue Overflow!\n");
         return;
     }
-    stack_push(&s1, value);
+    stack_push(&q.inStack, value);
 }
 
 void two_stack_dequeue() {
-    // If delete-stack is empty, reverse insert-stack into it.
-    if (stack_is_empty(&s2)) {
-        while (!stack_is_empty(&s1)) {
-            stack_push(&s2, stack_pop(&s1));
-        }
+    if (stack_is_empty(&q.outStack)) {
+        move_in_to_out();
     }
 
-    if (stack_is_empty(&s2)) {
+    if (stack_is_empty(&q.outStack)) {
         printf("Queue Underflow!\n");
         return;
     }
 
-    printf("Removed: %d\n", stack_pop(&s2));
+    printf("Removed: %d\n", stack_pop(&q.outStack));
 }
 
 void two_stack_display() {
-    if (stack_is_empty(&s1) && stack_is_empty(&s2)) {
+    if (stack_is_empty(&q.inStack) && stack_is_empty(&q.outStack)) {
         printf("Queue is empty!\n");
         return;
     }
 
     printf("Queue (FIFO): ");
 
-    // Items in s2 are already in dequeue order.
-    for (int i = s2.top; i >= 0; i--) {
-        printf("%d ", s2.data[i]);
+    // outStack top is the current front of queue.
+    for (int i = q.outStack.top; i >= 0; i--) {
+        printf("%d ", q.outStack.data[i]);
     }
 
-    // Items still in s1 are older at lower indices.
-    for (int i = 0; i <= s1.top; i++) {
-        printf("%d ", s1.data[i]);
+    // inStack bottom has older items than inStack top.
+    for (int i = 0; i <= q.inStack.top; i++) {
+        printf("%d ", q.inStack.data[i]);
     }
 
     printf("\n");
@@ -207,6 +219,7 @@ void two_stack_display() {
 // ==================== PART B - APPLICATION MODULES ====================
 int main() {
     int choice;
+    init_two_stack_queue();
     while (1) {
         printf("\n=== Queue Implementation ===\n");
         printf("1. Part A - Queue Operations\n");
