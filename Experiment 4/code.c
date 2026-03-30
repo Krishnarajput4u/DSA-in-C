@@ -250,9 +250,13 @@ void reset_circular_linked_list_queue() {
 }
 
 // ==================== MODULE 5 - QUEUE USING TWO STACKS ====================
+typedef struct stack_node {
+    int data;
+    struct stack_node *next;
+} StackNode;
+
 typedef struct {
-    int data[MAX];
-    int top;
+    StackNode *top;
 } Stack;
 
 typedef struct {
@@ -264,33 +268,44 @@ TwoStackQueue q;
 
 // Initialize both internal stacks as empty.
 void init_two_stack_queue() {
-    q.inStack.top = -1;
-    q.outStack.top = -1;
+    q.inStack.top = NULL;
+    q.outStack.top = NULL;
 }
 
 // Return 1 if stack has no items.
 int stack_is_empty(Stack *s) {
-    return s->top == -1;
+    return s->top == NULL;
 }
 
-// Return 1 if stack reached max capacity.
-int stack_is_full(Stack *s) {
-    return s->top == MAX - 1;
-}
-
-// Push a value onto stack if space exists.
+// Push a value onto a linked-list stack.
 void stack_push(Stack *s, int value) {
-    if (stack_is_full(s)) {
-        printf("Stack Overflow!\n");
+    StackNode *newNode = (StackNode *)malloc(sizeof(StackNode));
+    if (!newNode) {
+        printf("Memory allocation failed!\n");
         return;
     }
-    s->data[++s->top] = value;
+    newNode->data = value;
+    newNode->next = s->top;
+    s->top = newNode;
 }
 
 // Pop and return top value; return -1 when empty.
 int stack_pop(Stack *s) {
-    if (stack_is_empty(s)) return -1;
-    return s->data[s->top--];
+    if (stack_is_empty(s)) {
+        return -1;
+    }
+    StackNode *temp = s->top;
+    int value = temp->data;
+    s->top = s->top->next;
+    free(temp);
+    return value;
+}
+
+// Free all nodes in a linked-list stack.
+void clear_stack(Stack *s) {
+    while (!stack_is_empty(s)) {
+        stack_pop(s);
+    }
 }
 
 // Transfer elements so queue dequeue order is preserved.
@@ -302,10 +317,6 @@ void move_in_to_out() {
 
 // Enqueue into two-stack queue by pushing into input stack.
 void two_stack_enqueue(int value) {
-    if (stack_is_full(&q.inStack)) {
-        printf("Queue Overflow!\n");
-        return;
-    }
     stack_push(&q.inStack, value);
 }
 
@@ -323,6 +334,24 @@ void two_stack_dequeue() {
     printf("Removed: %d\n", stack_pop(&q.outStack));
 }
 
+// Print stack values from top to bottom.
+void print_stack_top_to_bottom(StackNode *top) {
+    StackNode *curr = top;
+    while (curr) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+}
+
+// Print stack values from bottom to top using recursion.
+void print_stack_bottom_to_top(StackNode *top) {
+    if (!top) {
+        return;
+    }
+    print_stack_bottom_to_top(top->next);
+    printf("%d ", top->data);
+}
+
 // Print queue order by reading output stack first, then input stack.
 void two_stack_display() {
     if (stack_is_empty(&q.inStack) && stack_is_empty(&q.outStack)) {
@@ -333,16 +362,18 @@ void two_stack_display() {
     printf("Queue (FIFO): ");
 
     // outStack top is the current front of queue.
-    for (int i = q.outStack.top; i >= 0; i--) {
-        printf("%d ", q.outStack.data[i]);
-    }
+    print_stack_top_to_bottom(q.outStack.top);
 
     // inStack bottom has older items than inStack top.
-    for (int i = 0; i <= q.inStack.top; i++) {
-        printf("%d ", q.inStack.data[i]);
-    }
+    print_stack_bottom_to_top(q.inStack.top);
 
     printf("\n");
+}
+
+// Reset queue implemented using two linked-list stacks.
+void reset_two_stack_queue() {
+    clear_stack(&q.inStack);
+    clear_stack(&q.outStack);
 }
 
 // ==================== PART B - APPLICATION MODULES ====================
@@ -871,6 +902,7 @@ int main() {
             }
             case 6: {
                 int ch, val;
+                reset_two_stack_queue();
                 while (1) {
                     printf("\n--- Module 5: Queue using Two Stacks ---\n");
                     printf("1. Enqueue\n2. Dequeue\n3. Display\n4. Back\n");
