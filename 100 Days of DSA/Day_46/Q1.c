@@ -1,4 +1,4 @@
-// Problem: Height of Binary Tree
+// Problem: Level Order Traversal
 
 // Implement the solution for this problem.
 
@@ -26,13 +26,27 @@ struct node* createNode(int data){
     return newNode;
 }
 
-int height(struct node* root){
+void levelOrderTraversal(struct node* root){
     if(root == NULL){
-        return -1; // Return -1 for null nodes to count edges
+        return;
     }
-    int leftHeight = height(root->left);
-    int rightHeight = height(root->right);
-    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1; // Add 1 for the current node
+    struct node* queue[100]; // Assuming a maximum of 100 nodes in the tree
+    int front = 0, rear = 0;
+
+    queue[rear++] = root; // Enqueue the root node
+
+    while(front < rear){
+        struct node* currentNode = queue[front++]; // Dequeue a node
+        printf("%d ", currentNode->data); // Process the current node
+
+        // Enqueue left and right children if they exist
+        if(currentNode->left != NULL){
+            queue[rear++] = currentNode->left;
+        }
+        if(currentNode->right != NULL){
+            queue[rear++] = currentNode->right;
+        }
+    }
 }
 
 int main(){
@@ -42,8 +56,9 @@ int main(){
     root->left->left = createNode(4);
     root->left->right = createNode(5);
 
-    int treeHeight = height(root);
-    printf("Height of the binary tree: %d\n", treeHeight);
+    printf("Level order traversal of the binary tree: ");
+    levelOrderTraversal(root);
+    printf("\n");
 
     return 0;
 }
